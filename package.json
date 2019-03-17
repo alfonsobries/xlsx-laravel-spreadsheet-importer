@@ -51,9 +51,16 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "sha.js": "^2.4.11"
+    "csv-stringify": "^5.3.0",
+    "pg": "^7.9.0",
+    "pg-copy-streams": "^2.0.0",
+    "sha.js": "^2.4.11",
+    "xlsx": "^0.14.1",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
+    "@types/pg": "^7.4.13",
+    "@types/yargs": "^12.0.9",
     "ava": "1.0.0-beta.7",
     "codecov": "^3.1.0",
     "cz-conventional-changelog": "^2.1.0",
@@ -64,6 +71,7 @@
     "prettier": "^1.15.2",
     "standard-version": "^4.4.0",
     "trash-cli": "^1.4.0",
+    "ts-node": "^8.0.3",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-immutable": "^5.0.0",
@@ -85,11 +93,15 @@
     }
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "arrowParens": "always"
   },
   "nyc": {
     "exclude": [
       "**/*.spec.js"
     ]
+  },
+  "bin": {
+    "xlsx-to-database": "build/main/index.js"
   }
 }
