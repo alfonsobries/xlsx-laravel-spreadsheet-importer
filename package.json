@@ -1,5 +1,5 @@
 {
-  "name": "xlsx-to-database",
+  "name": "@proscom/xlsx-to-database",
   "version": "1.0.0",
   "description": "Imports sheets from xlsx file to the database tables",
   "main": "build/main/index.js",
