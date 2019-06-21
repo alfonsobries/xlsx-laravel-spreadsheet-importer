@@ -4,7 +4,9 @@ import { join } from 'path';
 import yargs from 'yargs';
 import { run, RunOptions } from './run';
 import { createLogger } from './util';
+import dotenv from 'dotenv'
 
+dotenv.config()
 
 const args = yargs.options({
   input: {
@@ -14,15 +16,8 @@ const args = yargs.options({
     requiresArg: true,
     type: 'string'
   },
-  database: {
-    alias: 'd',
-    describe: 'Path to database connection configuration file',
-    demandOption: true,
-    requiresArg: true,
-    type: 'string'
-  },
-  tables: {
-    alias: 't',
+  sheets: {
+    alias: 's',
     describe: 'Only import specified sheets',
     requiresArg: true,
     type: 'array'
@@ -33,6 +28,13 @@ const args = yargs.options({
     describe: 'Prefix is prepended to the sheet name to get table name',
     requiresArg: true,
     type: 'string'
+  },
+  tableNames: {
+    alias: 'n',
+    default: [],
+    describe: 'Table names to use when storing the data',
+    requiresArg: true,
+    type: 'array'
   },
   batchSize: {
     describe: 'Amount of rows per single insert query',
@@ -53,8 +55,15 @@ const args = yargs.options({
   }
 }).argv;
 
-// tslint:disable-next-line:no-var-requires
-const dbConfig = require(join(process.cwd(), args.database));
+const dbConfig = {
+  "adapter": process.env.DB_CONNECTION,
+  "host": process.env.DB_HOST,
+  "port": process.env.DB_PORT,
+  "username": process.env.DB_PORT,
+  "password": process.env.DB_PASSWORD,
+  "database": process.env.DB_DATABASE,
+  "schema": process.env.DB_SCHEMA || 'public',
+};
 
 const log = createLogger();
 

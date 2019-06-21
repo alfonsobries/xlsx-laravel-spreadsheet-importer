@@ -6,7 +6,8 @@ const cell = (r, c) => xlsx.utils.encode_cell({ r, c });
 
 export interface RunOptions {
   input: string;
-  tables: string[];
+  sheets: string[];
+  tableNames: string[];
   prefix: string;
   drop: boolean;
   create: boolean;
@@ -16,20 +17,26 @@ export interface RunOptions {
 export async function run(dbConfig: any, options: RunOptions, log: (...args: any[]) => void) {
   log('Connecting to the database');
   const db = await createAdapter(dbConfig);
-  log('Database connected');
+  log('*Starting* Database connected');
 
   try {
-    log(`Reading input file '${options.input}'`);
+    log(`*Reading* input file '${options.input}'`);
     const wb = xlsx.readFile(options.input);
+    log(`*Readed* input file '${options.input}'`);
     for (const sheetName of wb.SheetNames) {
-      if (options.tables && options.tables.indexOf(sheetName) === -1) {
+      if (options.sheets && options.sheets.indexOf(sheetName) === -1) {
         continue;
       }
-      const tableName = options.prefix + sheetName;
+
+      const index = wb.SheetNames.indexOf(sheetName);
+      const tableName =  typeof options.tableNames[index] !== 'undefined'
+        ? options.prefix + options.tableNames[index]
+        : options.prefix + sheetName;
+
       log(`Importing sheet '${sheetName}' to table '${tableName}'`);
 
       if (options.drop) {
-        log(`Dropping table ${tableName}`);
+        log(`Dropping table [${tableName}]`);
         await db.dropTable(tableName);
       }
 
@@ -48,11 +55,12 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
       }
 
       if (options.drop || options.create) {
-        log(`Creating table ${tableName}(${columns.join(',')})`);
+        log(`*Creating* table [${tableName}](${columns.join(',')})`);
         await db.createTable(tableName, columns);
       }
 
       const nBatches = Math.ceil((nRows - 1) / options.batchSize);
+      log(`*Importing* [${nRows}] total items`);
       for (const iBatch of createRange(0, nBatches)) {
         const rows = [];
         const batchStart = iBatch * options.batchSize + 1;
@@ -77,11 +85,12 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
           break;
         }
 
-        log(`Inserting batch ${iBatch + 1}/${nBatches} (${rows.length})`);
+        log(`*Inserting* batch [${iBatch + 1}/${nBatches}] (${rows.length})`);
         await db.insertValues(tableName, columns, rows);
       }
     }
   } finally {
+    log('*Finishing*');
     await db.close();
     log('Database connection closed');
   }

@@ -3,6 +3,7 @@ import { PgSQLAdapter } from './pgsql.adapter';
 
 export async function createAdapter(config: any): Promise<DatabaseAdapter> {
   const { adapter, ...other } = config;
+
   if (!adapter) {
     throw new Error(`Database config should have property 'adapter' specifying database adapter`);
   }
