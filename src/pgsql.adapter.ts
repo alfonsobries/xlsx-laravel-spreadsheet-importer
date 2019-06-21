@@ -16,6 +16,7 @@ export class PgSQLAdapter implements DatabaseAdapter {
       await this.client.end();
     }
     const { schema, ...other } = options;
+    console.log(`Connecting to ${other.host}:${other.port}/${other.database}`);
     this.client = new Client(other);
     await this.client.connect();
     if (schema) {

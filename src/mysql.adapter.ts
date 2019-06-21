@@ -9,13 +9,14 @@ function wrapColumn(c) {
 }
 
 export class MySQLAdapter implements DatabaseAdapter {
-  protected client: object = null;
+  protected client = null;
 
   public async connect(options: any): Promise<any> {
     if (this.client) {
       await this.client.end();
     }
     const { schema, ...other } = options;
+    console.log(`Connecting to ${other.host}:${other.port}/${other.database}`);
     const dbConfig = {
       "host": other.host,
       "port": other.port,
@@ -23,8 +24,9 @@ export class MySQLAdapter implements DatabaseAdapter {
       "password": other.password,
       "database": other.database
     }
-    this.client = new mysql.createConnection(dbConfig);
-    await this.client.connect();
+    const connection = mysql.createConnection(dbConfig);
+    connection.connect()
+    this.client = connection;
     return this.client;
   }
 
@@ -34,20 +36,35 @@ export class MySQLAdapter implements DatabaseAdapter {
 
   public async dropTable(tableName: string): Promise<any> {
     // language=MySQL
-    return this.client.query(`
-      drop table if exists "${tableName}"
-    `);
+    return new Promise((resolve, reject) => {
+      this.client.query(`
+        drop table if exists ${tableName}
+      `, (error, results) => {
+        if (error) {
+          console.log("AAAAAA AAAAAA")
+          reject(error)
+        }
+
+        resolve(results)
+      });
+    })
   }
 
   public async createTable(tableName: string, columns: string[]): Promise<any> {
     this.checkColumns(columns);
-    const columnDefs = columns.map((c) => `"${c}" text`).join(',');
+    const columnDefs = columns.map((c) => `${c} text`).join(',');
     // language=MySQL
-    return this.client.query(`
-      create table if not exists "${tableName}" (
-        ${columnDefs}
-      )
-    `);
+    return new Promise((resolve, reject) => {
+      this.client.query(
+        `create table if not exists ${tableName} (${columnDefs})`,
+        (error, results) => {
+          if (error) {
+            reject(error)
+          }
+
+          resolve(results)
+        });
+    })
   }
 
   public async insertValues(
@@ -56,22 +73,16 @@ export class MySQLAdapter implements DatabaseAdapter {
     values: string[][]
   ): Promise<any> {
     this.checkColumns(columns);
-    const columnDefs = columns.map(wrapColumn).join(',');
-    const stream: WritableStream = this.client.query(
-      copyFrom(`copy "${tableName}"(${columnDefs}) from stdin (format csv)`)
-    );
-    const stringifier = csvStringify();
-    const result = new Promise((resolve, reject) => {
-      stringifier.on('error', reject);
-      stream.on('error', reject);
-      stream.on('end', resolve);
-    });
-    stringifier.pipe(stream);
-    for (let i = 0; i < values.length; i++) {
-      stringifier.write(values[i]);
-    }
-    stringifier.end();
-    return result;
+    const sql = `INSERT INTO ${tableName} (${columns.join(',')}) VALUES ?`;
+    return new Promise((resolve, reject) => {
+      this.client.query(sql, [values], (error, results) => {
+        if (error) {
+          reject(error)
+        }
+
+        resolve(results)
+      });
+    })
   }
 
   protected checkColumns(columns: string[]) {

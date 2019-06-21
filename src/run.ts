@@ -15,14 +15,18 @@ export interface RunOptions {
 }
 
 export async function run(dbConfig: any, options: RunOptions, log: (...args: any[]) => void) {
-  log('Connecting to the database');
+  const { adapter, ...other } = dbConfig;
+
   const db = await createAdapter(dbConfig);
-  log('*Starting* Database connected');
 
   try {
     log(`*Reading* input file '${options.input}'`);
     const wb = xlsx.readFile(options.input);
+    log('Connecting to the database');
+    
+    db.connect(other)
 
+    log('*Starting* Database connected');
     for (const sheetName of wb.SheetNames) {
       if (options.sheets && options.sheets.indexOf(sheetName) === -1) {
         continue;
@@ -73,7 +77,8 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
             if (wc) {
               hasNonEmpty = true;
             }
-            row.push(wc && wc.w || wc.v || '');
+            const value = !wc ? '' : (wc.w ? wc.w : (wc.v ? wc.v : ''))
+            row.push(value);
           }
           if (hasNonEmpty) {
             rows.push(row);
