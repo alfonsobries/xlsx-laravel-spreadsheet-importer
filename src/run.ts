@@ -22,7 +22,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
   try {
     log(`*Reading* input file '${options.input}'`);
     const wb = xlsx.readFile(options.input);
-    log(`*Readed* input file '${options.input}'`);
+
     for (const sheetName of wb.SheetNames) {
       if (options.sheets && options.sheets.indexOf(sheetName) === -1) {
         continue;
@@ -33,7 +33,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
         ? options.prefix + options.tableNames[index]
         : options.prefix + sheetName;
 
-      log(`Importing sheet '${sheetName}' to table '${tableName}'`);
+      log(`*Importing* sheet '${sheetName}' to table '${tableName}'`);
 
       if (options.drop) {
         log(`Dropping table [${tableName}]`);
@@ -47,12 +47,14 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
       const nRows = range.e.r + 1;
       for (let c = 0; c < nColumns; c++) {
         const wc = ws[cell(0, c)];
-        if (!wc || !wc.w) {
+        if (!wc || !(wc.w || wc.v)) {
           nColumns = c;
           break;
         }
-        columns.push(wc.w);
+        columns.push(wc.w || wc.v);
       }
+
+      console.log(columns)
 
       if (options.drop || options.create) {
         log(`*Creating* table [${tableName}](${columns.join(',')})`);
@@ -73,7 +75,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
             if (wc) {
               hasNonEmpty = true;
             }
-            row.push(wc && wc.w || '');
+            row.push(wc && wc.w || wc.v || '');
           }
           if (hasNonEmpty) {
             rows.push(row);
