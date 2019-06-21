@@ -54,8 +54,6 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
         columns.push(wc.w || wc.v);
       }
 
-      console.log(columns)
-
       if (options.drop || options.create) {
         log(`*Creating* table [${tableName}](${columns.join(',')})`);
         await db.createTable(tableName, columns);

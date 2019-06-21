@@ -1,4 +1,5 @@
 import { DatabaseAdapter } from './adapter.interface';
+import { MySQLAdapter } from './mysql.adapter';
 import { PgSQLAdapter } from './pgsql.adapter';
 
 export async function createAdapter(config: any): Promise<DatabaseAdapter> {
@@ -14,6 +15,10 @@ export async function createAdapter(config: any): Promise<DatabaseAdapter> {
     case 'pgsql':
       console.log(`Connecting to ${other.host}:${other.port}/${other.database}/${other.schema}`);
       client = new PgSQLAdapter();
+      break;
+    case 'mysql':
+      console.log(`Connecting to ${other.host}:${other.port}/${other.database}`);
+      client = new MySQLAdapter();
       break;
     default:
       throw new Error(`Unknown adapter '${adapter}'`);
