@@ -22,6 +22,12 @@ const args = yargs.options({
     requiresArg: true,
     type: 'array'
   },
+  sheetsIndex: {
+    alias: 'si',
+    describe: 'Only import specified sheets index',
+    requiresArg: true,
+    type: 'array'
+  },
   prefix: {
     alias: 'p',
     default: '',
@@ -37,6 +43,7 @@ const args = yargs.options({
     type: 'array'
   },
   batchSize: {
+    alias: 'b',
     describe: 'Amount of rows per single insert query',
     default: 1000,
     requiresArg: true,
@@ -52,7 +59,37 @@ const args = yargs.options({
     describe: 'Creates tables',
     default: false,
     type: 'boolean'
-  }
+  },
+  id: {
+    describe: 'Name of the ID column',
+    default: null,
+    requiresArg: true,
+    type: 'string'
+  },
+  relatedId: {
+    describe: 'Name of the related ID where the data comes from',
+    default: null,
+    requiresArg: true,
+    type: 'string'
+  },
+  columns: {
+    default: [],
+    describe: 'Extra column:value to add into the database',
+    requiresArg: true,
+    type: 'array'
+  },
+  artisan: {
+    default: '',
+    describe: 'php artisan path',
+    requiresArg: true,
+    type: 'string'
+  },
+  php: {
+    default: 'php',
+    describe: 'php path',
+    requiresArg: true,
+    type: 'string'
+  },
 }).argv;
 
 const dbConfig = {

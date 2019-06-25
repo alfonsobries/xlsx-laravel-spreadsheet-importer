@@ -1,3 +1,4 @@
+import { exec } from 'child_process'
 import xlsx from 'xlsx';
 import { createAdapter } from './createAdapter';
 import { createRange } from './util';
@@ -7,11 +8,17 @@ const cell = (r, c) => xlsx.utils.encode_cell({ r, c });
 export interface RunOptions {
   input: string;
   sheets: string[];
+  sheetsIndex: number[];
   tableNames: string[];
   prefix: string;
   drop: boolean;
   create: boolean;
   batchSize: number;
+  columns: string[];
+  id: string;
+  relatedId: string;
+  php: string;
+  artisan: string;
 }
 
 export async function run(dbConfig: any, options: RunOptions, log: (...args: any[]) => void) {
@@ -20,35 +27,62 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
   const db = await createAdapter(dbConfig);
 
   try {
-    log(`*Reading* input file '${options.input}'`);
+    if (!options.artisan) {
+      log(`Reading input file '${options.input}'`);
+    } else {
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=started`);
+    }
+
     const wb = xlsx.readFile(options.input);
-    log('Connecting to the database');
+
+    if (!options.artisan) {
+      log('Connecting to the database');
+    } else {
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=readed`);
+    }
     
     db.connect(other)
 
-    log('*Starting* Database connected');
+    if (!options.artisan) {
+      log('Database connected');
+    } else {
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=connected`);
+    }
+
     for (const sheetName of wb.SheetNames) {
+      const index = wb.SheetNames.indexOf(sheetName);
+      
       if (options.sheets && options.sheets.indexOf(sheetName) === -1) {
         continue;
       }
 
-      const index = wb.SheetNames.indexOf(sheetName);
+      if (options.sheetsIndex && !options.sheetsIndex.includes(index)) {
+        continue;
+      }
+
       const tableName =  typeof options.tableNames[index] !== 'undefined'
         ? options.prefix + options.tableNames[index]
         : options.prefix + sheetName;
 
-      log(`*Importing* sheet '${sheetName}' to table '${tableName}'`);
+      if (!options.artisan) {
+        log(`Importing sheet '${sheetName}' to table '${tableName}'`);
+      }
 
-      if (options.drop) {
-        log(`Dropping table [${tableName}]`);
+      if (options.drop && !options.artisan) {
+        log(`Dropping table ${tableName}`);
         await db.dropTable(tableName);
       }
 
-      const columns = [];
+      let columns = [];
       const ws = wb.Sheets[sheetName];
       const range = xlsx.utils.decode_range(ws['!ref']);
       let nColumns = range.e.c + 1;
       const nRows = range.e.r + 1;
+      
+      if (options.artisan) {
+        exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=total_rows --data=${nRows-1}`);
+      }
+
       for (let c = 0; c < nColumns; c++) {
         const wc = ws[cell(0, c)];
         if (!wc || !(wc.w || wc.v)) {
@@ -58,19 +92,35 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
         columns.push(wc.w || wc.v);
       }
 
+      if (options.columns.length) {
+        columns = options.columns.map(c => c.split(':')[0]).concat(columns)
+      }
+
       if (options.drop || options.create) {
-        log(`*Creating* table [${tableName}](${columns.join(',')})`);
-        await db.createTable(tableName, columns);
+        if (!options.artisan) {
+          log(`Creating table [${tableName}](${columns.join(',')})`);
+        }
+
+        await db.createTable(tableName, columns, options.id);
+
+        if (options.artisan) {
+          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=table_created --data=${tableName}`);
+        }
       }
 
       const nBatches = Math.ceil((nRows - 1) / options.batchSize);
-      log(`*Importing* [${nRows}] total items`);
+
+      if (!options.artisan) {
+        log(`Importing [${nRows}] total items`);
+      }
+
       for (const iBatch of createRange(0, nBatches)) {
         const rows = [];
         const batchStart = iBatch * options.batchSize + 1;
         const batchEnd = Math.min(nRows, (iBatch + 1) * options.batchSize + 1);
         for (let iRow = batchStart; iRow < batchEnd; iRow++) {
-          const row = [];
+          const row = options.columns.map(c => c.split(':')[1]);
+
           let hasNonEmpty = false;
           for (let iCol = 0; iCol < nColumns; iCol++) {
             const wc = ws[cell(iRow, iCol)];
@@ -80,23 +130,41 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
             const value = !wc ? '' : (wc.w ? wc.w : (wc.v ? wc.v : ''))
             row.push(value);
           }
+
           if (hasNonEmpty) {
             rows.push(row);
           }
         }
 
         if (rows.length === 0) {
-          log(`No non-empty rows in a batch. Breaking`);
+          if (options.artisan) {
+            exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=no_rows`);
+          } else {
+            log(`No non-empty rows in a batch. Breaking`);
+          }
           break;
         }
 
-        log(`*Inserting* batch [${iBatch + 1}/${nBatches}] (${rows.length})`);
+        if (!options.artisan) {
+          log(`*Inserting* batch [${iBatch + 1}/${nBatches}] (${rows.length})`);
+        }
+
         await db.insertValues(tableName, columns, rows);
+
+        if (options.artisan) {
+          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=processed --data=${iBatch * options.batchSize + rows.length}`);
+        }
       }
+
+    }
+  } catch (e) {
+    if (options.artisan) {
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=exception --message="${ e.message || ''}"`);
     }
   } finally {
-    log('*Finishing*');
     await db.close();
-    log('Database connection closed');
+    if (options.artisan) {
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=finish`);
+    }
   }
 }
