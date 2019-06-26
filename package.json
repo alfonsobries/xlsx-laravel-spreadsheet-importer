@@ -1,11 +1,11 @@
 {
-  "name": "@proscom/xlsx-to-database",
-  "version": "1.0.2",
-  "description": "Imports sheets from xlsx file to the database tables",
+  "name": "@alfonsobries/xlsx-laravel-spreadsheet-importer",
+  "version": "1.0.0",
+  "description": "Imports sheets from xlsx file to the database tables, and send artisan commands to track progress",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://gitlab.com/proscom/xlsx-to-database",
+  "repository": "https://github.com/alfonsobries/xlsx-laravel-spreadsheet-importer",
   "license": "MIT",
   "keywords": [],
   "scripts": {
@@ -104,6 +104,6 @@
     ]
   },
   "bin": {
-    "xlsx-to-database": "build/main/index.js"
+    "xlsx-laravel-spreadsheet-importer": "build/main/index.js"
   }
 }

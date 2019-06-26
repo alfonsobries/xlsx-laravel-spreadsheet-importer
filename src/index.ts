@@ -31,14 +31,14 @@ const args = yargs.options({
   prefix: {
     alias: 'p',
     default: '',
-    describe: 'Prefix is prepended to the sheet name to get table name',
+    describe: 'Prefix is prepended to the table name',
     requiresArg: true,
     type: 'string'
   },
   tableNames: {
     alias: 'n',
     default: [],
-    describe: 'Table names to use when storing the data',
+    describe: 'Table names to use when storing the data (instead of the sheet name)',
     requiresArg: true,
     type: 'array'
   },
@@ -61,13 +61,13 @@ const args = yargs.options({
     type: 'boolean'
   },
   id: {
-    describe: 'Name of the ID column',
+    describe: 'If set generates and ID column with the value',
     default: null,
     requiresArg: true,
     type: 'string'
   },
   relatedId: {
-    describe: 'Name of the related ID where the data comes from',
+    describe: 'Name of the related ID where the data comes from (to send to the artisan command)',
     default: null,
     requiresArg: true,
     type: 'string'
@@ -80,19 +80,19 @@ const args = yargs.options({
   },
   artisan: {
     default: '',
-    describe: 'php artisan path',
+    describe: 'Laravel php artisan path',
     requiresArg: true,
     type: 'string'
   },
   php: {
     default: 'php',
-    describe: 'php path',
+    describe: 'php executable path',
     requiresArg: true,
     type: 'string'
   },
   env: {
     default: '',
-    describe: 'enviroment for the artisan command',
+    describe: 'enviroment to sent to the artisan command',
     requiresArg: true,
     type: 'string'
   }
