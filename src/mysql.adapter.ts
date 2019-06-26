@@ -50,9 +50,14 @@ export class MySQLAdapter implements DatabaseAdapter {
     })
   }
 
-  public async createTable(tableName: string, columns: string[]): Promise<any> {
+  public async createTable(tableName: string, columns: string[], id: string): Promise<any> {
     this.checkColumns(columns);
-    const columnDefs = columns.map((c) => `${c} text`).join(',');
+    let columnDefs = columns.map((c) => `${c} text`).join(',');
+
+    if (id) {
+      columnDefs = `${id} INT AUTO_INCREMENT, ${columnDefs}, PRIMARY KEY (${id})`
+    }
+
     // language=MySQL
     return new Promise((resolve, reject) => {
       this.client.query(

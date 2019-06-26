@@ -31,7 +31,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
     if (!options.artisan) {
       log(`Reading input file '${options.input}'`);
     } else {
-      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=started${options.env ? ' --env=' + options.env : ''}`);
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=started${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
     }
 
     const wb = xlsx.readFile(options.input);
@@ -39,7 +39,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
     if (!options.artisan) {
       log('Connecting to the database');
     } else {
-      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=readed${options.env ? ' --env=' + options.env : ''}`);
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=readed${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
     }
     
     db.connect(other)
@@ -47,7 +47,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
     if (!options.artisan) {
       log('Database connected');
     } else {
-      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=connected${options.env ? ' --env=' + options.env : ''}`);
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=connected${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
     }
 
     for (const sheetName of wb.SheetNames) {
@@ -81,7 +81,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
       const nRows = range.e.r + 1;
       
       if (options.artisan) {
-        exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=total_rows --data=${nRows-1}${options.env ? ' --env=' + options.env : ''}`);
+        exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=total_rows --data=${nRows-1}${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
       }
 
       for (let c = 0; c < nColumns; c++) {
@@ -105,7 +105,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
         await db.createTable(tableName, columns, options.id);
 
         if (options.artisan) {
-          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=table_created --data=${tableName}${options.env ? ' --env=' + options.env : ''}`);
+          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=table_created --data=${tableName}${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
         }
       }
 
@@ -139,7 +139,7 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
 
         if (rows.length === 0) {
           if (options.artisan) {
-            exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=no_rows${options.env ? ' --env=' + options.env : ''}`);
+            exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=no_rows${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
           } else {
             log(`No non-empty rows in a batch. Breaking`);
           }
@@ -153,19 +153,19 @@ export async function run(dbConfig: any, options: RunOptions, log: (...args: any
         await db.insertValues(tableName, columns, rows);
 
         if (options.artisan) {
-          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=processing --data=${iBatch * options.batchSize + rows.length}${options.env ? ' --env=' + options.env : ''}${options.env ? ' --env=' + options.env : ''}`);
+          exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=processing --data=${iBatch * options.batchSize + rows.length}${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
         }
       }
 
     }
   } catch (e) {
     if (options.artisan) {
-      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=exception --message="${ e.message || ''}"${options.env ? ' --env=' + options.env : ''}`);
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=error --data=exception --message="${ e.message || ''}"${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
     }
   } finally {
     await db.close();
     if (options.artisan) {
-      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=finished${options.env ? ' --env=' + options.env : ''}`);
+      exec(`${options.php} ${options.artisan} importer:progress --related=${options.relatedId} --type=finished${options.env ? ' --env=' + options.env : ''} --pid=${process.pid}`);
     }
   }
 }

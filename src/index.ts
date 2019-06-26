@@ -110,5 +110,4 @@ const dbConfig = {
 
 const log = createLogger();
 
-run(dbConfig, args as RunOptions, log)
-  .catch(e => console.error(e));
+run(dbConfig, args as RunOptions, log).catch(e => console.error(e));

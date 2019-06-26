@@ -3,10 +3,14 @@ build
 test
 src/**.js
 .idea/*
+.env
 
 coverage
 .nyc_output
 *.log
+*.xlsx
+*.xls
+*.csv
 
 yarn.lock
 package-lock.json
