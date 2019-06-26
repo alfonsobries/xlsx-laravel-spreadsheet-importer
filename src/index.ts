@@ -90,6 +90,12 @@ const args = yargs.options({
     requiresArg: true,
     type: 'string'
   },
+  env: {
+    default: '',
+    describe: 'enviroment for the artisan command',
+    requiresArg: true,
+    type: 'string'
+  },
 }).argv;
 
 const dbConfig = {
