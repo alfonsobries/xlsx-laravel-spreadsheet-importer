@@ -18,14 +18,14 @@ export class MySQLAdapter implements DatabaseAdapter {
     const { schema, ...other } = options;
     console.log(`Connecting to ${other.host}:${other.port}/${other.database}`);
     const dbConfig = {
-      "host": other.host,
-      "port": other.port,
-      "user": other.username,
-      "password": other.password,
-      "database": other.database
-    }
+      host: other.host,
+      port: other.port,
+      user: other.username,
+      password: other.password,
+      database: other.database
+    };
     const connection = mysql.createConnection(dbConfig);
-    connection.connect()
+    connection.connect();
     this.client = connection;
     return this.client;
   }
@@ -37,25 +37,32 @@ export class MySQLAdapter implements DatabaseAdapter {
   public async dropTable(tableName: string): Promise<any> {
     // language=MySQL
     return new Promise((resolve, reject) => {
-      this.client.query(`
+      this.client.query(
+        `
         drop table if exists ${tableName}
-      `, (error, results) => {
-        if (error) {
-          console.log("AAAAAA AAAAAA")
-          reject(error)
-        }
+      `,
+        (error, results) => {
+          if (error) {
+            console.log('AAAAAA AAAAAA');
+            reject(error);
+          }
 
-        resolve(results)
-      });
-    })
+          resolve(results);
+        }
+      );
+    });
   }
 
-  public async createTable(tableName: string, columns: string[], id: string): Promise<any> {
+  public async createTable(
+    tableName: string,
+    columns: string[],
+    id: string
+  ): Promise<any> {
     this.checkColumns(columns);
     let columnDefs = columns.map((c) => `${c} text`).join(',');
 
     if (id) {
-      columnDefs = `${id} INT AUTO_INCREMENT, ${columnDefs}, PRIMARY KEY (${id})`
+      columnDefs = `${id} INT AUTO_INCREMENT, ${columnDefs}, PRIMARY KEY (${id})`;
     }
 
     // language=MySQL
@@ -64,12 +71,13 @@ export class MySQLAdapter implements DatabaseAdapter {
         `create table if not exists ${tableName} (${columnDefs})`,
         (error, results) => {
           if (error) {
-            reject(error)
+            reject(error);
           }
 
-          resolve(results)
-        });
-    })
+          resolve(results);
+        }
+      );
+    });
   }
 
   public async insertValues(
@@ -82,12 +90,12 @@ export class MySQLAdapter implements DatabaseAdapter {
     return new Promise((resolve, reject) => {
       this.client.query(sql, [values], (error, results) => {
         if (error) {
-          reject(error)
+          reject(error);
         }
 
-        resolve(results)
+        resolve(results);
       });
-    })
+    });
   }
 
   protected checkColumns(columns: string[]) {

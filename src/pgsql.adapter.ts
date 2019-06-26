@@ -39,13 +39,17 @@ export class PgSQLAdapter implements DatabaseAdapter {
     `);
   }
 
-  public async createTable(tableName: string, columns: string[], id: string): Promise<any> {
+  public async createTable(
+    tableName: string,
+    columns: string[],
+    id: string
+  ): Promise<any> {
     this.checkColumns(columns);
 
     let columnDefs = columns.map((c) => `"${c}" text`).join(',');
-    
+
     if (id) {
-      columnDefs = `"${id}" serial PRIMARY KEY,${columnDefs}`
+      columnDefs = `"${id}" serial PRIMARY KEY,${columnDefs}`;
     }
     // language=PostgreSQL
     return this.client.query(`

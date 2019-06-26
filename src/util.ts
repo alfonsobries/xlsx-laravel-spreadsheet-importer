@@ -1,4 +1,3 @@
-
 export function* createRange(start: number, end: number) {
   for (let i = start; i < end; i++) {
     yield i;
@@ -12,5 +11,5 @@ export function createLogger() {
     const diff = now - prevTime;
     console.log(...args, `+${diff}ms`);
     prevTime = now;
-  }
+  };
 }

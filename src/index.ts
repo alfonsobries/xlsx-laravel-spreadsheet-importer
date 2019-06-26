@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
+import dotenv from 'dotenv';
 import { join } from 'path';
 import yargs from 'yargs';
 import { run, RunOptions } from './run';
 import { createLogger } from './util';
-import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config();
 
 const args = yargs.options({
   input: {
@@ -95,19 +95,19 @@ const args = yargs.options({
     describe: 'enviroment for the artisan command',
     requiresArg: true,
     type: 'string'
-  },
+  }
 }).argv;
 
 const dbConfig = {
-  "adapter": process.env.DB_CONNECTION,
-  "host": process.env.DB_HOST,
-  "port": process.env.DB_PORT,
-  "username": process.env.DB_USERNAME,
-  "password": process.env.DB_PASSWORD,
-  "database": process.env.DB_DATABASE,
-  "schema": process.env.DB_SCHEMA || 'public',
+  adapter: process.env.DB_CONNECTION,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  schema: process.env.DB_SCHEMA || 'public'
 };
 
 const log = createLogger();
 
-run(dbConfig, args as RunOptions, log).catch(e => console.error(e));
+run(dbConfig, args as RunOptions, log).catch((e) => console.error(e));
