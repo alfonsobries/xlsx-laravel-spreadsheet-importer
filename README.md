@@ -14,6 +14,7 @@ npm install -g @alfonsobries/xlsx-laravel-spreadsheet-importer
 ```
 
 ### Usage:
+
 Create a .env file with the database settings
 
 ```
@@ -66,3 +67,15 @@ Options:
   --php                php path                        [string] [default: "php"]
   --env                enviroment for the artisan command [string] [default: ""]
 ```
+
+### Artisan command
+
+If the `--artisan` option is set it will create an Laravel artisan command with the progress of the import that can be readed in a Laravel app.
+
+| Option    | Possible values                                              | Description                                                  |
+| --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| --related | Any value used a `relatedId` param                           | Optional `id` that was sent as a param when running the script (useful to associate the data to a model for example) |
+| --type    | `started`, `readed`, `connected`, `total_rows`, `table_created`, `error`, `finished`,`processing` |                                                              |
+| --data    | Depends of the type of the progress, for `total_rows` the number of rows, for `table_created` the name of the table, for `error` the error message, for `processing` the total rows processed | Data related with the progress type                          |
+| --env     | Laravel app enviroment                                       | Optional `env` that was sent as a param when running the script (to run the artisan command in different enviroments) |
+| --pid     | The current process id                                       | The process id of the running script, useful for kill the process if neccesary |
