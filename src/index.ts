@@ -78,6 +78,12 @@ const args = yargs.options({
     requiresArg: true,
     type: 'array'
   },
+  formatted: {
+    alias: 'f',
+    describe: 'Read as formatted text by default',
+    default: false,
+    type: 'boolean'
+  },
   artisan: {
     default: '',
     describe: 'Laravel php artisan path',

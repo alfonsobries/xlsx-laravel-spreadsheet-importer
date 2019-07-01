@@ -15,6 +15,7 @@ export interface RunOptions {
   create: boolean;
   batchSize: number;
   columns: string[];
+  formatted: boolean;
   id: string;
   relatedId: string;
   php: string;
@@ -115,11 +116,12 @@ export async function run(
 
       for (let c = 0; c < nColumns; c++) {
         const wc = ws[cell(0, c)];
-        if (!wc || !(wc.w || wc.v)) {
+        const val = options.formatted ? wc.w || wc.v : wc.v;
+        if (!wc || !val) {
           nColumns = c;
           break;
         }
-        columns.push(wc.w || wc.v);
+        columns.push(val);
       }
 
       if (options.columns.length) {
