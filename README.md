@@ -2,11 +2,11 @@
 
 Based on `@proscom/xlsx-to-database`
 
-Cli tool to import sheets from xlsx files (or other compatible formats in the SheetJs package) into temporal database tables.
-- It optionally creates php laravel artisan commands to track the progress of the import in your laravel app.
-- Once the temporal table is uploaded you can play with the data, execute sql queries, import the content into the final table, etc. and finally remove the temporal table.
-- That means, of course *way* faster and more flexible import of data, xlsx can import a super big spreadsheet in just a few seconds.
-- Compatible with postgresql as MySQL
+CLI tool to import sheets from xlsx files (or other compatible formats in the SheetJs package) into temporal database tables.
+- It optionally triggers PHP Laravel artisan commands to track the progress of the import into your Laravel app.
+- Once the temporal table is uploaded, you can play with the data, execute SQL queries, import the content into the final table, etc., once you finish working with the data you can remove the temporal table.
+- Using node instead of PHP for reading and import spreadsheets is **considerably** faster, also, because you will work with a temporal database table, the data is faster and easy to handle.
+- Compatible with PostgreSQL as MySQL
 - * Laravel package for handling the data coming soon
 
 Uses [pg-copy-streams](https://www.npmjs.com/package/pg-copy-streams) for faster inserts in PostgreSql datatabases. 
@@ -75,7 +75,7 @@ Options:
 
 ### Artisan command
 
-If the `--artisan` option is set it will create an Laravel artisan command with the progress of the import that can be readed in a Laravel app.
+If the `--artisan` option is set it will create a Laravel artisan command with the progress of the import that can be read in a Laravel app.
 
 | Option    | Possible values                                              | Description                                                  |
 | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
