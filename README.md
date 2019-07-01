@@ -2,7 +2,12 @@
 
 Based on `@proscom/xlsx-to-database`
 
-Cli tool to import sheets from xlsx to the database tables that also allows to create laravel artisan commands to track the progress into a laravel app.
+Cli tool to import sheets from xlsx files (or other compatible formats in the SheetJs package) into temporal database tables.
+- It optionally creates php laravel artisan commands to track the progress of the import in your laravel app.
+- Once the temporal table is uploaded you can play with the data, execute sql queries, import the content into the final table, etc. and finally remove the temporal table.
+- That means, of course *way* faster and more flexible import of data, xlsx can import a super big spreadsheet in just a few seconds.
+- Compatible with postgresql as MySQL
+- * Laravel package for handling the data coming soon
 
 Uses [pg-copy-streams](https://www.npmjs.com/package/pg-copy-streams) for faster inserts in PostgreSql datatabases. 
 Uses [xlsx](https://www.npmjs.com/package/xlsx) to parse xlsx files.
@@ -10,7 +15,7 @@ Uses [xlsx](https://www.npmjs.com/package/xlsx) to parse xlsx files.
 ### Installation:
 
 ```bash
-npm install -g @alfonsobries/xlsx-laravel-spreadsheet-importer
+npm install @alfonsobries/xlsx-laravel-spreadsheet-importer
 ```
 
 ### Usage:
@@ -27,14 +32,14 @@ DB_PASSWORD=
 ```
 
 ```bash
-$ xlsx-laravel-spreadsheet-importer \
+$ ./node_modules/.bin/xlsx-laravel-spreadsheet-importer \
     -i input.xlsx \
 ```
 
 Or for a laravel app
 
 ```bash
-$ xlsx-laravel-spreadsheet-importer \
+$ ./node_modules/.bin/xlsx-laravel-spreadsheet-importer \
     -i input.xlsx \
     --php /usr/bin/php \
     --artisan /home/myproject/path/artisan \
