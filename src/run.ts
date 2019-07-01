@@ -38,9 +38,9 @@ export async function run(
       log(`Reading input file '${options.input}'`);
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
-        } --relatedId=${options.relatedId} --type=started${
+        }" --relatedId=${options.relatedId} --type=started${
           options.env ? ' --env=' + options.env : ''
         } --pid=${process.pid}`
       );
@@ -52,9 +52,9 @@ export async function run(
       log('Connecting to the database');
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
-        } --relatedId=${options.relatedId} --type=readed${
+        }" --relatedId=${options.relatedId} --type=readed${
           options.env ? ' --env=' + options.env : ''
         } --pid=${process.pid}`
       );
@@ -66,9 +66,9 @@ export async function run(
       log('Database connected');
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
-        } --relatedId=${options.relatedId} --type=connected${
+        }" --relatedId=${options.relatedId} --type=connected${
           options.env ? ' --env=' + options.env : ''
         } --pid=${process.pid}`
       );
@@ -107,9 +107,9 @@ export async function run(
 
       if (options.artisan) {
         exec(
-          `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          `${options.php} ${options.artisan} importer:progress --relatedClass="${
             options.relatedClass
-          } --relatedId=${options.relatedId} --type=total_rows --data=${nRows -
+          }" --relatedId=${options.relatedId} --type=total_rows --data=${nRows -
             1}${options.env ? ' --env=' + options.env : ''} --pid=${
             process.pid
           }`
@@ -140,9 +140,9 @@ export async function run(
           exec(
             `${options.php} ${
               options.artisan
-            } importer:progress --relatedClass=${
+            } importer:progress --relatedClass="${
               options.relatedClass
-            } --relatedId=${
+            }" --relatedId=${
               options.relatedId
             } --type=table_created --data=${tableName}${
               options.env ? ' --env=' + options.env : ''
@@ -188,9 +188,9 @@ export async function run(
             exec(
               `${options.php} ${
                 options.artisan
-              } importer:progress --relatedClass=${
+              } importer:progress --relatedClass="${
                 options.relatedClass
-              } --relatedId=${options.relatedId} --type=error --data=no_rows${
+              }" --relatedId=${options.relatedId} --type=error --data=no_rows${
                 options.env ? ' --env=' + options.env : ''
               } --pid=${process.pid}`
             );
@@ -210,9 +210,9 @@ export async function run(
           exec(
             `${options.php} ${
               options.artisan
-            } importer:progress --relatedClass=${
+            } importer:progress --relatedClass="${
               options.relatedClass
-            } --relatedId=${
+            }" --relatedId=${
               options.relatedId
             } --type=processing --data=${iBatch * options.batchSize +
               rows.length}${options.env ? ' --env=' + options.env : ''} --pid=${
@@ -225,9 +225,9 @@ export async function run(
   } catch (e) {
     if (options.artisan) {
       exec(
-        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
-        } --relatedId=${
+        }" --relatedId=${
           options.relatedId
         } --type=error --data=exception --message="${e.message || ''}"${
           options.env ? ' --env=' + options.env : ''
@@ -238,9 +238,9 @@ export async function run(
     await db.close();
     if (options.artisan) {
       exec(
-        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
-        } --relatedId=${options.relatedId} --type=finished${
+        }" --relatedId=${options.relatedId} --type=finished${
           options.env ? ' --env=' + options.env : ''
         } --pid=${process.pid}`
       );
