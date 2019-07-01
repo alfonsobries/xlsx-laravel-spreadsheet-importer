@@ -2,12 +2,14 @@
 
 Based on `@proscom/xlsx-to-database`
 
-CLI tool to import sheets from xlsx files (or other compatible formats in the SheetJs package) into temporal database tables.
+CLI tool to import sheets from xlsx files into temporal database tables that are much easier to work with.
+
 - It optionally triggers PHP Laravel artisan commands to track the progress of the import into your Laravel app.
-- Once the temporal table is uploaded, you can play with the data, execute SQL queries, import the content into the final table, etc., once you finish working with the data you can remove the temporal table.
-- Using node instead of PHP for reading and import spreadsheets is **considerably** faster, also, because you will work with a temporal database table, the data is faster and easy to handle.
+- You can interact with those artisan commands by using the [laravel package](https://github.com/alfonsobries/laravel-spreadsheet-importer), it also allow you to easily interact with the temporal data: [laravel-spreadsheet-importer](https://github.com/alfonsobries/laravel-spreadsheet-importer) 
+- Compatible with multiple formats, see the compatible formated in the dependency (https://www.npmjs.com/package/xlsx#file-formats) 
+- Once the temporal table is uploaded, you can play with the data, execute Eloquent & SQL queries, import the content into the final table, etc., and of course once you finish working with the data you can remove the temporal table.
+- Using node instead of PHP for reading and import spreadsheets is **considerably** faster, also, because you will work with a temporal database table, the data is much easier to work with and the operations are faster.
 - Compatible with PostgreSQL as MySQL
-- * Laravel package for handling the data coming soon
 
 Uses [pg-copy-streams](https://www.npmjs.com/package/pg-copy-streams) for faster inserts in PostgreSql datatabases. 
 Uses [xlsx](https://www.npmjs.com/package/xlsx) to parse xlsx files.
@@ -20,7 +22,7 @@ npm install @alfonsobries/xlsx-laravel-spreadsheet-importer --save
 
 ### Usage:
 
-Create a .env file with the database settings
+Create a .env file with the database settings (If the files exists in your laravel app this step is not neccesary)
 
 ```
 DB_CONNECTION=pgsql # or mysql
@@ -47,6 +49,7 @@ $ ./node_modules/.bin/xlsx-laravel-spreadsheet-importer \
     --relatedId 1
     --relatedClass "App\Models\MyModel"
 ```
+The laravel package automatically generates this command for you: [laravel-spreadsheet-importer](https://github.com/alfonsobries/laravel-spreadsheet-importer) 
 
 ```bash
 $ xlsx-laravel-spreadsheet-importer --help
