@@ -1,6 +1,6 @@
 {
   "name": "@alfonsobries/xlsx-laravel-spreadsheet-importer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Imports sheets from xlsx file to the database tables, and send artisan commands to track progress",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",

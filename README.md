@@ -44,6 +44,8 @@ $ ./node_modules/.bin/xlsx-laravel-spreadsheet-importer \
     --php /usr/bin/php \
     --artisan /home/myproject/path/artisan \
     --env testing
+    --relatedId 1
+    --relatedClass "App\Models\MyModel"
 ```
 
 ```bash
