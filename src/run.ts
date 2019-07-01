@@ -116,12 +116,11 @@ export async function run(
 
       for (let c = 0; c < nColumns; c++) {
         const wc = ws[cell(0, c)];
-        const val = options.formatted ? wc.w || wc.v : wc.v;
-        if (!wc || !val) {
+        if (!wc || !(wc.w || wc.v)) {
           nColumns = c;
           break;
         }
-        columns.push(val);
+        columns.push(wc.w || wc.v);
       }
 
       if (options.columns.length) {
@@ -165,7 +164,7 @@ export async function run(
             if (wc) {
               hasNonEmpty = true;
             }
-            const value = !wc ? '' : wc.w ? wc.w : wc.v ? wc.v : '';
+            const value = !wc ? '' : (!options.formatted ? (wc.v || '') : (wc.w || wc.v || ''));
             row.push(value);
           }
 
