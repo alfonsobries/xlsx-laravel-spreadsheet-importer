@@ -38,7 +38,8 @@ const args = yargs.options({
   tableNames: {
     alias: 'n',
     default: [],
-    describe: 'Table names to use when storing the data (instead of the sheet name)',
+    describe:
+      'Table names to use when storing the data (instead of the sheet name)',
     requiresArg: true,
     type: 'array'
   },
@@ -67,7 +68,15 @@ const args = yargs.options({
     type: 'string'
   },
   relatedId: {
-    describe: 'Name of the related ID where the data comes from (to send to the artisan command)',
+    describe:
+      'Name of the related ID where the data comes from (to send to the artisan command)',
+    default: null,
+    requiresArg: true,
+    type: 'string'
+  },
+  relatedClass: {
+    describe:
+      'Name of the related Model Class where the data comes from (to send to the artisan command)',
     default: null,
     requiresArg: true,
     type: 'string'

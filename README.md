@@ -15,7 +15,7 @@ Uses [xlsx](https://www.npmjs.com/package/xlsx) to parse xlsx files.
 ### Installation:
 
 ```bash
-npm install @alfonsobries/xlsx-laravel-spreadsheet-importer
+npm install @alfonsobries/xlsx-laravel-spreadsheet-importer --save
 ```
 
 ### Usage:
@@ -54,23 +54,29 @@ Options:
   --input, -i          Input xlsx file                       [string] [required]
   --sheets, -s         Only import specified sheets                      [array]
   --sheetsIndex, --si  Only import specified sheets index                [array]
-  --prefix, -p         Prefix is prepended to the sheet name to get table name
+  --prefix, -p         Prefix is prepended to the table name
                                                           [string] [default: ""]
-  --tableNames, -n     Table names to use when storing the data
-                                                           [array] [default: []]
+  --tableNames, -n     Table names to use when storing the data (instead of the
+                       sheet name)                         [array] [default: []]
   --batchSize, -b      Amount of rows per single insert query
                                                         [number] [default: 1000]
   --drop               Drops and recreates matched tables
                                                       [boolean] [default: false]
   --create, -c         Creates tables                 [boolean] [default: false]
-  --id                 Name of the ID column            [string] [default: null]
-  --relatedId          Name of the related ID where the data comes from
+  --id                 If set generates and ID column with the value
                                                         [string] [default: null]
+  --relatedId          Name of the related ID where the data comes from (to send
+                       to the artisan command)          [string] [default: null]
+  --relatedClass       Name of the related Model Class where the data comes from
+                       (to send to the artisan command) [string] [default: null]
   --columns            Extra column:value to add into the database
                                                            [array] [default: []]
-  --artisan            php artisan path                   [string] [default: ""]
-  --php                php path                        [string] [default: "php"]
-  --env                enviroment for the artisan command [string] [default: ""]
+  --formatted, -f      Read as formatted text by default
+                                                      [boolean] [default: false]
+  --artisan            Laravel php artisan path           [string] [default: ""]
+  --php                php executable path             [string] [default: "php"]
+  --env                enviroment to sent to the artisan command
+                                                          [string] [default: ""]
 ```
 
 ### Artisan command
@@ -79,7 +85,8 @@ If the `--artisan` option is set it will create a Laravel artisan command with t
 
 | Option    | Possible values                                              | Description                                                  |
 | --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| --related | Any value used a `relatedId` param                           | Optional `id` that was sent as a param when running the script (useful to associate the data to a model for example) |
+| --relatedClass | Any value used a `relatedClass` param                           | Optional `id` that was sent as a param when running the script (useful to associate the data to a model for example) |
+| --relatedId | Any value used a `relatedId` param                           | Optional `id` that was sent as a param when running the script (useful to associate the data to a model for example) |
 | --type    | `started`, `readed`, `connected`, `total_rows`, `table_created`, `error`, `finished`,`processing` |                                                              |
 | --data    | Depends of the type of the progress, for `total_rows` the number of rows, for `table_created` the name of the table, for `error` the error message, for `processing` the total rows processed | Data related with the progress type                          |
 | --env     | Laravel app enviroment                                       | Optional `env` that was sent as a param when running the script (to run the artisan command in different enviroments) |

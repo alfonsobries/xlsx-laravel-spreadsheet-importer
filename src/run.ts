@@ -18,6 +18,7 @@ export interface RunOptions {
   formatted: boolean;
   id: string;
   relatedId: string;
+  relatedClass: string;
   php: string;
   artisan: string;
   env: string;
@@ -37,11 +38,11 @@ export async function run(
       log(`Reading input file '${options.input}'`);
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --related=${
-          options.relatedId
-        } --type=started${options.env ? ' --env=' + options.env : ''} --pid=${
-          process.pid
-        }`
+        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          options.relatedClass
+        } --relatedId=${options.relatedId} --type=started${
+          options.env ? ' --env=' + options.env : ''
+        } --pid=${process.pid}`
       );
     }
 
@@ -51,11 +52,11 @@ export async function run(
       log('Connecting to the database');
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --related=${
-          options.relatedId
-        } --type=readed${options.env ? ' --env=' + options.env : ''} --pid=${
-          process.pid
-        }`
+        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          options.relatedClass
+        } --relatedId=${options.relatedId} --type=readed${
+          options.env ? ' --env=' + options.env : ''
+        } --pid=${process.pid}`
       );
     }
 
@@ -65,11 +66,11 @@ export async function run(
       log('Database connected');
     } else {
       exec(
-        `${options.php} ${options.artisan} importer:progress --related=${
-          options.relatedId
-        } --type=connected${options.env ? ' --env=' + options.env : ''} --pid=${
-          process.pid
-        }`
+        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          options.relatedClass
+        } --relatedId=${options.relatedId} --type=connected${
+          options.env ? ' --env=' + options.env : ''
+        } --pid=${process.pid}`
       );
     }
 
@@ -106,11 +107,12 @@ export async function run(
 
       if (options.artisan) {
         exec(
-          `${options.php} ${options.artisan} importer:progress --related=${
-            options.relatedId
-          } --type=total_rows --data=${nRows - 1}${
-            options.env ? ' --env=' + options.env : ''
-          } --pid=${process.pid}`
+          `${options.php} ${options.artisan} importer:progress --relatedClass=${
+            options.relatedClass
+          } --relatedId=${options.relatedId} --type=total_rows --data=${nRows -
+            1}${options.env ? ' --env=' + options.env : ''} --pid=${
+            process.pid
+          }`
         );
       }
 
@@ -136,7 +138,11 @@ export async function run(
 
         if (options.artisan) {
           exec(
-            `${options.php} ${options.artisan} importer:progress --related=${
+            `${options.php} ${
+              options.artisan
+            } importer:progress --relatedClass=${
+              options.relatedClass
+            } --relatedId=${
               options.relatedId
             } --type=table_created --data=${tableName}${
               options.env ? ' --env=' + options.env : ''
@@ -164,7 +170,11 @@ export async function run(
             if (wc) {
               hasNonEmpty = true;
             }
-            const value = !wc ? '' : (!options.formatted ? (wc.v || '') : (wc.w || wc.v || ''));
+            const value = !wc
+              ? ''
+              : !options.formatted
+              ? wc.v || ''
+              : wc.w || wc.v || '';
             row.push(value);
           }
 
@@ -176,9 +186,11 @@ export async function run(
         if (rows.length === 0) {
           if (options.artisan) {
             exec(
-              `${options.php} ${options.artisan} importer:progress --related=${
-                options.relatedId
-              } --type=error --data=no_rows${
+              `${options.php} ${
+                options.artisan
+              } importer:progress --relatedClass=${
+                options.relatedClass
+              } --relatedId=${options.relatedId} --type=error --data=no_rows${
                 options.env ? ' --env=' + options.env : ''
               } --pid=${process.pid}`
             );
@@ -196,7 +208,11 @@ export async function run(
 
         if (options.artisan) {
           exec(
-            `${options.php} ${options.artisan} importer:progress --related=${
+            `${options.php} ${
+              options.artisan
+            } importer:progress --relatedClass=${
+              options.relatedClass
+            } --relatedId=${
               options.relatedId
             } --type=processing --data=${iBatch * options.batchSize +
               rows.length}${options.env ? ' --env=' + options.env : ''} --pid=${
@@ -209,7 +225,9 @@ export async function run(
   } catch (e) {
     if (options.artisan) {
       exec(
-        `${options.php} ${options.artisan} importer:progress --related=${
+        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          options.relatedClass
+        } --relatedId=${
           options.relatedId
         } --type=error --data=exception --message="${e.message || ''}"${
           options.env ? ' --env=' + options.env : ''
@@ -220,11 +238,11 @@ export async function run(
     await db.close();
     if (options.artisan) {
       exec(
-        `${options.php} ${options.artisan} importer:progress --related=${
-          options.relatedId
-        } --type=finished${options.env ? ' --env=' + options.env : ''} --pid=${
-          process.pid
-        }`
+        `${options.php} ${options.artisan} importer:progress --relatedClass=${
+          options.relatedClass
+        } --relatedId=${options.relatedId} --type=finished${
+          options.env ? ' --env=' + options.env : ''
+        } --pid=${process.pid}`
       );
     }
   }
