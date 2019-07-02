@@ -98,6 +98,7 @@ export async function run(
         if (!options.artisan) {
           log(`Dropping table ${tableName}`);
         }
+
         await db.dropTable(tableName);
       }
 
