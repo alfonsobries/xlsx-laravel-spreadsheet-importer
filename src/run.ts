@@ -94,8 +94,10 @@ export async function run(
         log(`Importing sheet '${sheetName}' to table '${tableName}'`);
       }
 
-      if (options.drop && !options.artisan) {
-        log(`Dropping table ${tableName}`);
+      if (options.drop) {
+        if (!options.artisan) {
+          log(`Dropping table ${tableName}`);
+        }
         await db.dropTable(tableName);
       }
 
