@@ -20,7 +20,7 @@ export class MySQLAdapter implements DatabaseAdapter {
     const dbConfig = {
       host: other.host,
       port: other.port,
-      user: other.username,
+      user: other.user,
       password: other.password,
       database: other.database
     };
