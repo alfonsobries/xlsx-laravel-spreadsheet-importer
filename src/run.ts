@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import xlsx from 'xlsx';
 import { createAdapter } from './createAdapter';
-import { createRange } from './util';
+import { createRange, promiseExec } from './util';
 
 const cell = (r, c) => xlsx.utils.encode_cell({ r, c });
 
@@ -40,7 +40,7 @@ export async function run(
     }
 
     if (options.artisan) {
-      exec(
+      await promiseExec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
         }" --relatedId=${options.relatedId} --type=started${
@@ -56,7 +56,7 @@ export async function run(
     }
 
     if (options.artisan) {
-      exec(
+      await promiseExec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
         }" --relatedId=${options.relatedId} --type=readed${
@@ -72,7 +72,7 @@ export async function run(
     }
 
     if (options.artisan) {
-      exec(
+      await promiseExec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
         }" --relatedId=${options.relatedId} --type=connected${
@@ -116,7 +116,7 @@ export async function run(
       const nRows = range.e.r + 1;
 
       if (options.artisan) {
-        exec(
+        await promiseExec(
           `${options.php} ${options.artisan} importer:progress --relatedClass="${
             options.relatedClass
           }" --relatedId=${options.relatedId} --type=total_rows --data=${nRows -
@@ -147,7 +147,7 @@ export async function run(
         await db.createTable(tableName, columns, options.id);
 
         if (options.artisan) {
-          exec(
+          await promiseExec(
             `${options.php} ${
               options.artisan
             } importer:progress --relatedClass="${
@@ -195,7 +195,7 @@ export async function run(
 
         if (rows.length === 0) {
           if (options.artisan) {
-            exec(
+            await promiseExec(
               `${options.php} ${
                 options.artisan
               } importer:progress --relatedClass="${
@@ -217,7 +217,7 @@ export async function run(
         await db.insertValues(tableName, columns, rows);
 
         if (options.artisan) {
-          exec(
+          await promiseExec(
             `${options.php} ${
               options.artisan
             } importer:progress --relatedClass="${
@@ -234,7 +234,7 @@ export async function run(
     }
   } catch (e) {
     if (options.artisan) {
-      exec(
+      await promiseExec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
         }" --relatedId=${
@@ -247,7 +247,7 @@ export async function run(
   } finally {
     await db.close();
     if (options.artisan) {
-      exec(
+      await promiseExec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
         }" --relatedId=${options.relatedId} --type=finished${
