@@ -55,6 +55,11 @@ const args = yargs.options({
     default: false,
     type: 'boolean'
   },
+  log: {
+    describe: 'Forces log to the users when its disabled because it uses artisan',
+    default: false,
+    type: 'boolean'
+  },
   create: {
     alias: 'c',
     describe: 'Creates tables',

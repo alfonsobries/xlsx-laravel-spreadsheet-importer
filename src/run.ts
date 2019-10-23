@@ -12,6 +12,7 @@ export interface RunOptions {
   tableNames: string[];
   prefix: string;
   drop: boolean;
+  log: boolean;
   create: boolean;
   batchSize: number;
   columns: string[];
@@ -34,9 +35,11 @@ export async function run(
   const db = await createAdapter(dbConfig);
 
   try {
-    if (!options.artisan) {
+    if (!options.artisan || options.log) {
       log(`Reading input file '${options.input}'`);
-    } else {
+    }
+
+    if (options.artisan) {
       exec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
@@ -48,9 +51,11 @@ export async function run(
 
     const wb = xlsx.readFile(options.input);
 
-    if (!options.artisan) {
+    if (!options.artisan || options.log) {
       log('Connecting to the database');
-    } else {
+    }
+
+    if (options.artisan) {
       exec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
@@ -62,9 +67,11 @@ export async function run(
 
     db.connect(other);
 
-    if (!options.artisan) {
+    if (!options.artisan || options.log) {
       log('Database connected');
-    } else {
+    }
+
+    if (options.artisan) {
       exec(
         `${options.php} ${options.artisan} importer:progress --relatedClass="${
           options.relatedClass
@@ -90,12 +97,12 @@ export async function run(
           ? options.prefix + options.tableNames[index]
           : options.prefix + sheetName;
 
-      if (!options.artisan) {
+      if (!options.artisan || options.log) {
         log(`Importing sheet '${sheetName}' to table '${tableName}'`);
       }
 
       if (options.drop) {
-        if (!options.artisan) {
+        if (!options.artisan || options.log) {
           log(`Dropping table ${tableName}`);
         }
 
@@ -133,7 +140,7 @@ export async function run(
       }
 
       if (options.drop || options.create) {
-        if (!options.artisan) {
+        if (!options.artisan || options.log) {
           log(`Creating table [${tableName}](${columns.join(',')})`);
         }
 
@@ -156,7 +163,7 @@ export async function run(
 
       const nBatches = Math.ceil((nRows - 1) / options.batchSize);
 
-      if (!options.artisan) {
+      if (!options.artisan || options.log) {
         log(`Importing [${nRows}] total items`);
       }
 
@@ -203,7 +210,7 @@ export async function run(
           break;
         }
 
-        if (!options.artisan) {
+        if (!options.artisan || options.log) {
           log(`*Inserting* batch [${iBatch + 1}/${nBatches}] (${rows.length})`);
         }
 
