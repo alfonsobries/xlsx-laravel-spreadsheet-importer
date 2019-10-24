@@ -53,11 +53,12 @@
   "dependencies": {
     "csv-stringify": "^5.3.0",
     "dotenv": "^8.0.0",
-    "js-snakecase": "^1.2.0",
     "mysql": "^2.17.1",
     "pg": "^7.9.0",
     "pg-copy-streams": "^2.0.0",
+    "remove-accents": "^0.4.2",
     "sha.js": "^2.4.11",
+    "snake-case": "^2.1.0",
     "xlsx": "^0.14.1",
     "yargs": "^13.2.2"
   },

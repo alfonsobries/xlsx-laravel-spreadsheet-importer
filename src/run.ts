@@ -1,8 +1,7 @@
 import { exec } from 'child_process';
 import xlsx from 'xlsx';
 import { createAdapter } from './createAdapter';
-import { createRange, promiseExec } from './util';
-import jsSnakecase from 'js-snakecase'
+import { createRange, promiseExec, slugify } from './util';
 
 const cell = (r, c) => xlsx.utils.encode_cell({ r, c });
 
@@ -137,7 +136,7 @@ export async function run(
       }
 
       if (options.columns.length) {
-        columns = options.columns.map((c) => c.split(':')[0]).concat(columns).map(c => jsSnakecase(c));
+        columns = options.columns.map((c) => c.split(':')[0]).concat(columns).map(c => slugify(c));
       }
 
       if (options.drop || options.create) {
